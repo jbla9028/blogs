@@ -17,3 +17,4 @@ resource "azurerm_private_dns_zone" "private_dns_zones" {
   name                = each.value
   resource_group_name = azurerm_resource_group.dns-rg.name
 }
+
