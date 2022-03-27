@@ -15,6 +15,7 @@ resource "azurerm_key_vault" "main" {
   resource_group_name         = azurerm_resource_group.kv-rg.name
   enabled_for_disk_encryption = true
   tenant_id                   = data.azurerm_client_config.current.tenant_id
+  enable_rbac_authorization   = true
   soft_delete_retention_days  = 7
   purge_protection_enabled    = false
   sku_name                    = "standard"
@@ -33,7 +34,13 @@ resource "azurerm_private_endpoint" "main" {
     is_manual_connection           = false
     private_connection_resource_id = azurerm_key_vault.main.id
     name                           = "${azurerm_key_vault.main.name}-psc"
-    subresource_names = ["vault"]
+    subresource_names              = ["vault"]
   }
   depends_on = [azurerm_key_vault.main]
+}
+
+resource "azurerm_role_assignment" "terraform_spn" {
+  scope                = azurerm_key_vault.main.id
+  role_definition_name = "Key Vault Administrator"
+  principal_id         = data.azurerm_client_config.current.object_id
 }

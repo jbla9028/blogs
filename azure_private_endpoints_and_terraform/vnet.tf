@@ -27,6 +27,14 @@ resource "azurerm_subnet" "PE_Subnet1" {
   depends_on                                     = [azurerm_virtual_network.vnet]
 }
 
+resource "azurerm_subnet" "Azure_Bastion_Subnet1" {
+  name                 = "AzureBastionSubnet"
+  resource_group_name  = azurerm_resource_group.vnet-rg.name
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  address_prefixes     = ["10.1.3.0/24"]
+  depends_on           = [azurerm_virtual_network.vnet]
+}
+
 ###Here's our private dns links #####
 resource "azurerm_private_dns_zone_virtual_network_link" "private_dns_network_links" {
   for_each              = local.private_dns_zones
